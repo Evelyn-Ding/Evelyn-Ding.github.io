@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your Name</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --cream:#faf8f3;
+  --parchment:#f4f0e6;
+  --ink:#2a2520;
+  --ink-faded:#6b6458;
+  --ink-ghost:#a09890;
+  --purple:#5c3d9e;
+  --purple-mid:#7b5bbf;
+  --purple-light:#9b7fd4;
+  --purple-pale:#ede8f7;
+  --underline-purple:rgba(92,61,158,0.55);
+  --serif:'EB Garamond',Georgia,serif;
+  --display:'Cormorant Garamond',Georgia,serif;
+}
+html{scroll-behavior:smooth}
+body{background:var(--cream);color:var(--ink);font-family:var(--serif);font-size:17px;line-height:1.8;min-height:100vh}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,248,243,0.93);backdrop-filter:blur(8px);border-bottom:1px solid rgba(42,37,32,0.08);padding:0 3rem}
+.nav-inner{max-width:860px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:54px}
+.nav-logo{font-family:var(--display);font-size:1.1rem;color:var(--ink);letter-spacing:0.04em;font-weight:300;font-style:italic}
+.nav-links{display:flex;gap:2rem}
+.nav-links button{background:none;border:none;cursor:pointer;font-family:var(--serif);font-size:0.8rem;color:var(--ink-faded);letter-spacing:0.1em;text-transform:uppercase;transition:color 0.2s;padding:4px 0;border-bottom:1.5px solid transparent}
+.nav-links button:hover,.nav-links button.active{color:var(--purple);border-bottom-color:var(--underline-purple)}
+
+.page{display:none;padding-top:56px;min-height:100vh}
+.page.active{display:block}
+.container{max-width:780px;margin:0 auto;padding:3rem 2rem 5rem}
+
+/* Chapter header */
+.chapter-title{font-family:var(--display);font-size:2.8rem;font-weight:300;line-height:1.15;color:var(--ink);margin-bottom:0.5rem}
+.chapter-rule{width:55px;height:1px;background:var(--purple-light);margin:1.2rem 0 2rem}
+
+/* Drop cap opening */
+.opening-para{font-family:var(--display);font-size:1.12rem;line-height:1.9;color:var(--ink);margin-bottom:1.8rem;position:relative}
+.drop-cap{float:left;font-family:var(--display);font-size:5.2rem;line-height:0.78;color:var(--purple);margin-right:0.08em;margin-top:0.12em;font-weight:600;font-style:normal}
+
+/* Annotations */
+.highlight{background:linear-gradient(transparent 52%,rgba(92,61,158,0.2) 52%);padding:0 1px;display:inline}
+.circled{position:relative;display:inline;white-space:nowrap}
+.circled::after{content:'';position:absolute;inset:-3px -6px;border:1.5px solid rgba(92,61,158,0.45);border-radius:50% 47% 53% 49%/49% 53% 47% 51%;pointer-events:none;display:block}
+.underline-text{text-decoration:underline;text-decoration-color:var(--underline-purple);text-underline-offset:3px;text-decoration-thickness:1px}
+.margin-note-right{position:absolute;right:-170px;top:2px;width:150px;font-size:0.7rem;color:var(--purple-mid);font-style:italic;line-height:1.5;border-left:2px solid rgba(92,61,158,0.3);padding-left:8px;font-family:var(--serif)}
+
+/* Headshot + bio */
+.about-top{display:grid;grid-template-columns:190px 1fr;gap:2.5rem;margin-bottom:2rem;align-items:start}
+.headshot-placeholder{width:100%;aspect-ratio:3/4;background:var(--parchment);border:1px solid rgba(42,37,32,0.14);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px}
+.photo-caption{font-size:0.75rem;color:var(--ink-ghost);text-align:center;margin-top:0.4rem;font-style:italic}
+.bio-text{font-size:0.97rem;line-height:1.85;color:var(--ink);position:relative}
+.bio-text p{margin-bottom:0.9rem}
+.location-badge{display:inline-flex;align-items:center;gap:0.5rem;font-size:0.78rem;color:var(--ink-ghost);letter-spacing:0.05em;margin-bottom:1.5rem}
+.location-dot{width:6px;height:6px;border-radius:50%;background:var(--purple);display:inline-block}
+
+/* Gallery */
+.gallery-section{margin:2.5rem 0}
+.gallery-section h3{font-family:var(--display);font-size:1.4rem;font-weight:400;margin-bottom:1rem;color:var(--ink)}
+.gallery-tabs{display:flex;gap:1.5rem;margin-bottom:1.2rem;border-bottom:1px solid rgba(42,37,32,0.1)}
+.gallery-tab{background:none;border:none;cursor:pointer;font-family:var(--serif);font-size:0.8rem;color:var(--ink-faded);padding:0.4rem 0;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all 0.2s;letter-spacing:0.05em}
+.gallery-tab.active{color:var(--purple);border-bottom-color:var(--purple)}
+.gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0.8rem}
+.gallery-item{aspect-ratio:1;background:var(--parchment);border:1px solid rgba(42,37,32,0.1);display:flex;align-items:center;justify-content:center;font-size:0.68rem;color:var(--ink-ghost);font-style:italic;text-align:center;padding:0.5rem;cursor:pointer;transition:transform 0.2s,border-color 0.2s;position:relative;overflow:hidden}
+.gallery-item:hover{transform:translateY(-2px);border-color:var(--purple-light)}
+.scrap-tag{position:absolute;top:-1px;left:8px;background:var(--purple-pale);color:var(--purple);font-size:0.62rem;padding:1px 7px;font-style:italic}
+
+/* Research timeline — vertical */
+.v-node:hover .vnode-card{border-color:var(--purple-light)}
+.v-node:hover .vnode-circle{background:var(--purple-pale)}
+#node-detail{display:none;background:var(--parchment);border:1px solid rgba(92,61,158,0.2);padding:1.5rem 2rem;margin:0 0 2rem 52px;position:relative}
+
+/* Finance */
+.section-block{margin:2.2rem 0}
+.section-block h3{font-family:var(--display);font-size:1.4rem;font-weight:400;color:var(--ink);margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:1px solid rgba(42,37,32,0.1)}
+.card-item{background:var(--parchment);border:1px solid rgba(42,37,32,0.1);padding:0.9rem 1.2rem;margin-bottom:0.7rem}
+.card-item h4{font-size:0.93rem;font-weight:600;color:var(--ink);margin-bottom:0.15rem}
+.card-item p{font-size:0.8rem;color:var(--ink-faded)}
+.tag{display:inline-block;font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;background:var(--purple-pale);color:var(--purple);padding:2px 7px;margin-bottom:0.4rem}
+.video-card{background:var(--parchment);border:1px solid rgba(42,37,32,0.1);padding:2rem;text-align:center;margin:1rem 0}
+.btn-link{display:inline-block;font-family:var(--serif);font-size:0.82rem;color:var(--purple);border:1px solid var(--underline-purple);padding:0.4rem 1.2rem;cursor:pointer;background:none;transition:background 0.2s;letter-spacing:0.04em}
+.btn-link:hover{background:var(--purple-pale)}
+
+/* Law — Substack style */
+.law-intro{font-family:var(--display);font-size:1.05rem;color:var(--ink-faded);font-style:italic;line-height:1.9;max-width:560px;margin-bottom:2.5rem}
+.essay-card{padding:2.2rem 0;border-bottom:1px solid rgba(42,37,32,0.1);position:relative}
+.essay-card:last-child{border-bottom:none}
+.essay-num{font-family:var(--display);font-size:2.2rem;font-weight:300;font-style:italic;color:var(--purple);margin-bottom:0.6rem;display:block;line-height:1}
+.essay-meta-line{font-size:0.72rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--ink-ghost);margin-bottom:0.7rem}
+.essay-meta-line span{color:var(--purple-mid)}
+.essay-card h3{font-family:var(--display);font-size:1.95rem;font-weight:400;line-height:1.2;color:var(--ink);margin-bottom:0.8rem}
+.essay-card p{font-size:0.92rem;color:var(--ink-faded);line-height:1.8;max-width:580px;margin-bottom:1.1rem}
+.read-link{font-size:0.85rem;color:var(--purple);text-decoration:none;letter-spacing:0.04em;display:inline-flex;align-items:center;gap:6px;transition:gap 0.2s;cursor:pointer;background:none;border:none;font-family:var(--serif)}
+.read-link:hover{gap:10px;color:var(--purple-mid)}
+
+.page-footer{text-align:center;padding:2rem 0;border-top:1px solid rgba(42,37,32,0.08);margin-top:3rem}
+.page-num{font-family:var(--display);font-size:0.8rem;color:var(--ink-ghost);letter-spacing:0.15em}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.page.active .container{animation:fadeUp 0.45s ease}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <span class="nav-logo">Y.N. ✦</span>
+    <div class="nav-links">
+      <button class="active" onclick="goTo('about',this)">About</button>
+      <button onclick="goTo('research',this)">Research</button>
+      <button onclick="goTo('finance',this)">Finance</button>
+      <button onclick="goTo('law',this)">Law</button>
+    </div>
+  </div>
+</nav>
+
+<!-- ══════════════════════════ ABOUT ══════════════════════════ -->
+<div class="page active" id="page-about">
+<div class="container">
+
+  <div style="position:relative">
+    <h1 class="chapter-title">About Me</h1>
+    <div class="chapter-rule"></div>
+    <svg style="position:absolute;top:0;right:0;width:170px;height:92px;pointer-events:none;opacity:0.47" viewBox="0 0 170 92">
+      <!-- open book outline -->
+      <path d="M20,72 L20,18 Q20,14 24,14 L80,14 Q85,14 85,18 L85,72" stroke="#7b5bbf" stroke-width="1.1" fill="none"/>
+      <path d="M85,18 Q85,14 90,14 L146,14 Q150,14 150,18 L150,72 L85,72" stroke="#7b5bbf" stroke-width="1.1" fill="none"/>
+      <line x1="85" y1="14" x2="85" y2="72" stroke="#9b7fd4" stroke-width="0.7" stroke-dasharray="2,2"/>
+      <!-- text lines on left page -->
+      <line x1="30" y1="28" x2="75" y2="28" stroke="#d4c9e8" stroke-width="1"/>
+      <line x1="30" y1="36" x2="75" y2="36" stroke="#d4c9e8" stroke-width="1"/>
+      <!-- highlight on left page -->
+      <rect x="30" y="42" width="32" height="7" fill="rgba(92,61,158,0.18)" rx="1"/>
+      <line x1="30" y1="52" x2="68" y2="52" stroke="#d4c9e8" stroke-width="1"/>
+      <!-- circle annotation on right page -->
+      <ellipse cx="118" cy="36" rx="20" ry="10" stroke="#9b7fd4" stroke-width="1" fill="none" stroke-dasharray="2,2"/>
+      <line x1="95" y1="52" x2="143" y2="52" stroke="#d4c9e8" stroke-width="1"/>
+      <line x1="95" y1="60" x2="130" y2="60" stroke="#d4c9e8" stroke-width="1"/>
+      <!-- bookmark ribbon -->
+      <path d="M140,14 L140,34 L136,30 L132,34 L132,14" fill="#ede8f7" stroke="#7b5bbf" stroke-width="1"/>
+      <!-- star -->
+      <text x="8" y="18" font-size="9" fill="#5c3d9e" opacity="0.5">✦</text>
+    </svg>
+  </div>
+
+  <div class="location-badge">
+    <span class="location-dot"></span>
+    New York City, NY
+  </div>
+
+  <!-- Headshot + opening para + bio all in one grid -->
+  <div class="about-top">
+    <div>
+      <div class="headshot-placeholder">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#a09890" stroke-width="1.2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        <span style="font-size:0.7rem;color:var(--ink-ghost);font-style:italic">your photo</span>
+      </div>
+      <p class="photo-caption">[ headshot ]</p>
+    </div>
+    <div class="bio-text">
+      <!-- Drop-cap opening paragraph -->
+      <div class="opening-para" style="position:relative;margin-bottom:1rem">
+        <span class="drop-cap">M</span>y name is <span class="underline-text" style="font-weight:500">Your Name</span>. I live in <span class="highlight">New York City</span> and I cannot pick just one story to tell. I love <span class="highlight">the questions</span> in research, the <span class="underline-text">numbers</span> in finance, and the stubborn beauty of <span class="circled">a well-argued case</span>. This website is my notebook — dog-eared, annotated, and a little smudged.
+        <svg style="position:absolute;top:-8px;right:-8px;width:22px;height:16px;opacity:0.35;pointer-events:none" viewBox="0 0 22 16">
+          <text x="0" y="12" font-size="9" fill="#9b7fd4">✦</text>
+          <text x="12" y="8" font-size="5" fill="#7b5bbf">✦</text>
+        </svg>
+      </div>
+      <!-- Replace the paragraphs below with your real bio -->
+      <p>Currently pursuing [your degree] at [your university], I'm drawn to questions at the intersection of justice, data, and human systems.</p>
+      <p>[Add 2–3 more sentences about your background, interests, and what you're working toward. Keep it personal but professional.]</p>
+      <p>Outside of academics, I photograph the city, keep a scrapbook, and make art.</p>
+      <div class="margin-note-right">replace with your real bio!</div>
+    </div>
+  </div>
+
+  <!-- wavy divider -->
+  <svg width="100%" height="18" viewBox="0 0 700 18" style="margin:0.5rem 0 2.5rem;opacity:0.28" preserveAspectRatio="none">
+    <path d="M0,9 Q87,2 175,9 T350,9 T525,9 T700,9" stroke="#5c3d9e" stroke-width="1" fill="none"/>
+  </svg>
+
+  <!-- Through My Lens gallery -->
+  <div class="gallery-section">
+    <h3>Through My Lens</h3>
+    <div class="gallery-tabs">
+      <button class="gallery-tab active" onclick="switchTab(this,'photos')">Photography</button>
+      <button class="gallery-tab" onclick="switchTab(this,'art')">Art</button>
+      <button class="gallery-tab" onclick="switchTab(this,'scrapbook')">Scrapbook</button>
+    </div>
+    <div id="tab-photos" class="gallery-grid">
+      <!-- Replace these divs with <img> tags pointing to your photo files -->
+      <div class="gallery-item">NYC street<br><em>[ photo ]</em></div>
+      <div class="gallery-item"><em>[ photo ]</em></div>
+      <div class="gallery-item"><em>[ photo ]</em></div>
+      <div class="gallery-item"><em>[ photo ]</em></div>
+      <div class="gallery-item"><em>[ photo ]</em></div>
+      <div class="gallery-item"><em>[ photo ]</em></div>
+    </div>
+    <div id="tab-art" class="gallery-grid" style="display:none">
+      <div class="gallery-item"><em>[ artwork ]</em></div>
+      <div class="gallery-item"><em>[ artwork ]</em></div>
+      <div class="gallery-item"><em>[ artwork ]</em></div>
+    </div>
+    <div id="tab-scrapbook" class="gallery-grid" style="display:none">
+      <div class="gallery-item" style="position:relative"><span class="scrap-tag">summer '23</span><em>[ scrapbook ]</em></div>
+      <div class="gallery-item" style="position:relative"><span class="scrap-tag">NYC</span><em>[ scrapbook ]</em></div>
+      <div class="gallery-item"><em>[ scrapbook ]</em></div>
+    </div>
+  </div>
+
+  <div class="page-footer"><span class="page-num">— i —</span></div>
+</div>
+</div>
+
+<!-- ══════════════════════════ RESEARCH ══════════════════════════ -->
+<div class="page" id="page-research">
+<div class="container">
+  <div style="position:relative">
+    <h1 class="chapter-title">Research Journey</h1>
+    <div class="chapter-rule"></div>
+    <!-- Doodle: constellation of dots connected by lines, like a research map -->
+    <svg style="position:absolute;top:0;right:0;width:160px;height:88px;pointer-events:none;opacity:0.46" viewBox="0 0 160 88">
+      <line x1="20" y1="60" x2="55" y2="28" stroke="#9b7fd4" stroke-width="0.8"/>
+      <line x1="55" y1="28" x2="100" y2="44" stroke="#9b7fd4" stroke-width="0.8"/>
+      <line x1="100" y1="44" x2="138" y2="18" stroke="#9b7fd4" stroke-width="0.8"/>
+      <line x1="55" y1="28" x2="80" y2="72" stroke="#9b7fd4" stroke-width="0.8" stroke-dasharray="3,2"/>
+      <circle cx="20" cy="60" r="3" fill="#d4c9e8"/>
+      <circle cx="55" cy="28" r="4.5" fill="#7b5bbf"/>
+      <circle cx="100" cy="44" r="3.5" fill="#9b7fd4"/>
+      <circle cx="138" cy="18" r="5" fill="#5c3d9e"/>
+      <circle cx="80" cy="72" r="2.5" fill="#d4c9e8"/>
+      <text x="142" y="14" font-size="7" fill="#9b7fd4" font-style="italic" font-family="Georgia,serif">now</text>
+      <text x="22" y="78" font-size="7" fill="#9b7fd4" font-style="italic" font-family="Georgia,serif">origin</text>
+    </svg>
+  </div>
+  <p style="font-size:0.93rem;color:var(--ink-faded);margin-bottom:2.5rem;font-style:italic">Each node marks a chapter in my research story — click any to expand.</p>
+
+  <!-- Curved timeline: SVG spine with HTML nodes positioned alongside -->
+  <div style="position:relative;margin:0 0 1rem 0">
+    <!-- The curved SVG spine — drawn down the left, weaving gently -->
+    <svg id="timeline-spine" width="60" height="560" viewBox="0 0 60 560" style="position:absolute;left:0;top:0;pointer-events:none">
+      <defs>
+        <linearGradient id="spineGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#d4c9e8"/>
+          <stop offset="100%" stop-color="#5c3d9e"/>
+        </linearGradient>
+      </defs>
+      <!-- Gently winding path through 5 node centres at y=18,130,242,354,466 -->
+      <path id="spine-path" d="M30,0 C45,40 15,80 30,112 C45,144 15,190 30,224 C45,258 15,310 30,336 C45,362 15,420 30,448 C45,476 30,520 30,560" stroke="url(#spineGrad)" stroke-width="1.4" fill="none" stroke-dasharray="5,3"/>
+    </svg>
+
+    <!-- Nodes — positioned with padding-left to sit right of the spine -->
+    <div style="padding-left:62px">
+
+      <div class="v-node" onclick="showNode(0)" style="position:relative;margin-bottom:2.2rem;cursor:pointer;min-height:36px">
+        <div style="position:absolute;left:-44px;top:0;width:34px;height:34px;border-radius:50%;background:#ede8f7;border:1.5px solid #5c3d9e;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;color:#5c3d9e;font-family:var(--serif);transition:background 0.2s" class="vnode-circle">01</div>
+        <div style="padding:0.75rem 1.1rem;background:var(--parchment);border:1px solid rgba(42,37,32,0.1);transition:border-color 0.2s" class="vnode-card">
+          <p style="font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-ghost);margin-bottom:0.15rem">20XX</p>
+          <h4 style="font-family:var(--display);font-size:1.1rem;font-weight:400;color:var(--ink)">First Project</h4>
+        </div>
+      </div>
+
+      <div class="v-node" onclick="showNode(1)" style="position:relative;margin-bottom:2.2rem;cursor:pointer;min-height:36px">
+        <div style="position:absolute;left:-44px;top:0;width:34px;height:34px;border-radius:50%;background:#ede8f7;border:1.5px solid #5c3d9e;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;color:#5c3d9e;font-family:var(--serif);transition:background 0.2s" class="vnode-circle">02</div>
+        <div style="padding:0.75rem 1.1rem;background:var(--parchment);border:1px solid rgba(42,37,32,0.1);transition:border-color 0.2s" class="vnode-card">
+          <p style="font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-ghost);margin-bottom:0.15rem">20XX</p>
+          <h4 style="font-family:var(--display);font-size:1.1rem;font-weight:400;color:var(--ink)">Second Project</h4>
+        </div>
+      </div>
+
+      <div class="v-node" onclick="showNode(2)" style="position:relative;margin-bottom:2.2rem;cursor:pointer;min-height:36px">
+        <div style="position:absolute;left:-44px;top:0;width:34px;height:34px;border-radius:50%;background:#ede8f7;border:1.5px solid #5c3d9e;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;color:#5c3d9e;font-family:var(--serif);transition:background 0.2s" class="vnode-circle">03</div>
+        <div style="padding:0.75rem 1.1rem;background:var(--parchment);border:1px solid rgba(42,37,32,0.1);transition:border-color 0.2s" class="vnode-card">
+          <p style="font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-ghost);margin-bottom:0.15rem">20XX</p>
+          <h4 style="font-family:var(--display);font-size:1.1rem;font-weight:400;color:var(--ink)">Third Project</h4>
+        </div>
+      </div>
+
+      <div class="v-node" onclick="showNode(3)" style="position:relative;margin-bottom:2.2rem;cursor:pointer;min-height:36px">
+        <div style="position:absolute;left:-44px;top:0;width:34px;height:34px;border-radius:50%;background:#ede8f7;border:1.5px solid #5c3d9e;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;color:#5c3d9e;font-family:var(--serif);transition:background 0.2s" class="vnode-circle">04</div>
+        <div style="padding:0.75rem 1.1rem;background:var(--parchment);border:1px solid rgba(42,37,32,0.1);transition:border-color 0.2s" class="vnode-card">
+          <p style="font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-ghost);margin-bottom:0.15rem">20XX</p>
+          <h4 style="font-family:var(--display);font-size:1.1rem;font-weight:400;color:var(--ink)">Fourth Project</h4>
+        </div>
+      </div>
+
+      <div class="v-node" onclick="showNode(4)" style="position:relative;margin-bottom:0.5rem;cursor:pointer;min-height:36px">
+        <div style="position:absolute;left:-44px;top:0;width:34px;height:34px;border-radius:50%;background:#5c3d9e;border:1.5px solid #5c3d9e;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;color:white;font-family:var(--serif)" class="vnode-circle">05</div>
+        <div style="padding:0.75rem 1.1rem;background:var(--parchment);border:1px solid rgba(92,61,158,0.3);transition:border-color 0.2s" class="vnode-card">
+          <p style="font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--purple);margin-bottom:0.15rem">Ongoing</p>
+          <h4 style="font-family:var(--display);font-size:1.1rem;font-weight:400;color:var(--ink)">Current Work</h4>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Expanded node detail panel -->
+  <div id="node-detail" style="margin-left:62px">
+    <div style="position:absolute;top:-9px;left:14px;background:var(--purple);color:white;font-size:0.65rem;letter-spacing:0.12em;padding:2px 9px;text-transform:uppercase">Project</div>
+    <h4 id="node-title" style="font-family:var(--display);font-size:1.3rem;font-weight:400;color:var(--ink);margin-bottom:0.3rem;margin-top:0.4rem"></h4>
+    <p id="node-date" style="font-size:0.72rem;color:var(--purple);letter-spacing:0.08em;margin-bottom:0.7rem"></p>
+    <p id="node-desc" style="font-size:0.88rem;color:var(--ink-faded);line-height:1.75;margin-bottom:1rem"></p>
+    <div style="display:flex;gap:1rem;align-items:center">
+      <!-- Replace the placeholder div below with an <img> tag for your poster -->
+      <div style="width:76px;height:104px;background:var(--cream);border:1px solid rgba(42,37,32,0.1);display:flex;align-items:center;justify-content:center;font-size:0.62rem;color:var(--ink-ghost);text-align:center;flex-shrink:0">[ poster ]</div>
+      <p style="font-size:0.78rem;color:var(--ink-ghost);font-style:italic">Add your poster image and update the description with details about methodology, findings, and collaborators.</p>
+    </div>
+  </div>
+
+  <div class="page-footer"><span class="page-num">— ii —</span></div>
+</div>
+</div>
+
+<!-- ══════════════════════════ FINANCE ══════════════════════════ -->
+<div class="page" id="page-finance">
+<div class="container">
+  <div style="position:relative">
+    <h1 class="chapter-title">Finance Journey</h1>
+    <div class="chapter-rule"></div>
+    <svg style="position:absolute;top:12px;right:0;width:130px;height:72px;pointer-events:none;opacity:0.44" viewBox="0 0 130 72">
+      <!-- axes -->
+      <line x1="14" y1="8" x2="14" y2="58" stroke="#7b5bbf" stroke-width="1.1"/>
+      <line x1="14" y1="58" x2="110" y2="58" stroke="#7b5bbf" stroke-width="1.1"/>
+      <!-- bars -->
+      <rect x="22" y="44" width="12" height="14" fill="#ede8f7" stroke="#9b7fd4" stroke-width="0.8"/>
+      <rect x="40" y="36" width="12" height="22" fill="#d4c9e8" stroke="#9b7fd4" stroke-width="0.8"/>
+      <rect x="58" y="26" width="12" height="32" fill="#c0aee8" stroke="#7b5bbf" stroke-width="0.8"/>
+      <rect x="76" y="16" width="12" height="42" fill="#9b7fd4" stroke="#5c3d9e" stroke-width="0.8"/>
+      <!-- rising trend arrow -->
+      <path d="M22,50 Q50,30 88,14" stroke="#5c3d9e" stroke-width="1.2" fill="none" stroke-dasharray="3,2"/>
+      <path d="M84,11 L90,14 L86,19" fill="none" stroke="#5c3d9e" stroke-width="1.2"/>
+      <!-- magnifying glass -->
+      <circle cx="114" cy="22" r="8" stroke="#9b7fd4" stroke-width="1" fill="none"/>
+      <line x1="120" y1="28" x2="126" y2="34" stroke="#9b7fd4" stroke-width="1.2"/>
+      <!-- star -->
+      <text x="2" y="10" font-size="8" fill="#9b7fd4" opacity="0.5">✦</text>
+    </svg>
+  </div>
+
+  <div class="section-block">
+    <h3>Clubs &amp; Organizations</h3>
+    <!-- Add or remove .card-item blocks as needed -->
+    <div class="card-item">
+      <div class="tag">Club</div>
+      <h4>Finance / Investment Club Name</h4>
+      <p>Role · Semester Year</p>
+    </div>
+    <div class="card-item">
+      <div class="tag">Organization</div>
+      <h4>Business Organization Name</h4>
+      <p>Role · Semester Year</p>
+    </div>
+    <div class="card-item">
+      <div class="tag">Club</div>
+      <h4>Additional Club</h4>
+      <p>Role · Semester Year</p>
+    </div>
+  </div>
+
+  <div class="section-block">
+    <h3>Competitions &amp; Awards</h3>
+    <div class="card-item">
+      <div class="tag">Competition</div>
+      <h4>Case Competition Name</h4>
+      <p>Placement · Hosted by [Organization] · Year</p>
+    </div>
+    <div class="card-item">
+      <div class="tag">Award</div>
+      <h4>Scholarship / Award Name</h4>
+      <p>Granted by [Organization] · Year</p>
+    </div>
+    <div class="card-item">
+      <div class="tag">Competition</div>
+      <h4>Additional Competition</h4>
+      <p>Details · Year</p>
+    </div>
+  </div>
+
+  <div class="section-block">
+    <h3>Featured Work</h3>
+    <div class="video-card">
+      <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#9b7fd4" stroke-width="1.2" style="margin-bottom:0.7rem"><circle cx="12" cy="12" r="10"/><polygon points="10,8 16,12 10,16" fill="#9b7fd4" stroke="none"/></svg>
+      <p style="font-size:0.85rem;color:var(--ink-faded);margin-bottom:1rem;font-style:italic">A video I filmed on [topic] — a short documentary / explainer / pitch.</p>
+      <!-- Replace # with your actual video URL -->
+      <a href="#" class="btn-link" target="_blank" rel="noopener">Watch Video ↗</a>
+    </div>
+  </div>
+
+  <div class="page-footer"><span class="page-num">— iii —</span></div>
+</div>
+</div>
+
+<!-- ══════════════════════════ LAW ══════════════════════════ -->
+<div class="page" id="page-law">
+<div class="container">
+  <div style="position:relative">
+    <h1 class="chapter-title">Law Journey</h1>
+    <div class="chapter-rule"></div>
+    <svg style="position:absolute;top:8px;right:0;width:158px;height:82px;pointer-events:none;opacity:0.44" viewBox="0 0 158 82">
+      <!-- quill feather -->
+      <path d="M120,8 C100,20 78,38 62,70" stroke="#7b5bbf" stroke-width="1.2" fill="none"/>
+      <path d="M120,8 C112,24 96,36 80,52 C90,36 108,22 120,8Z" fill="#ede8f7" stroke="#9b7fd4" stroke-width="0.8"/>
+      <path d="M120,8 C128,20 118,42 102,58 C108,40 124,22 120,8Z" fill="#d4c9e8" stroke="#9b7fd4" stroke-width="0.8"/>
+      <!-- nib tip -->
+      <path d="M62,70 L58,76 L66,72Z" fill="#5c3d9e"/>
+      <!-- ink drop -->
+      <ellipse cx="56" cy="78" rx="3" ry="2" fill="#9b7fd4" opacity="0.6"/>
+      <!-- ruled lines below like a page -->
+      <line x1="8" y1="48" x2="50" y2="48" stroke="#d4c9e8" stroke-width="0.9"/>
+      <line x1="8" y1="56" x2="50" y2="56" stroke="#d4c9e8" stroke-width="0.9"/>
+      <!-- highlighted word on ruled line -->
+      <rect x="8" y="60" width="28" height="8" fill="rgba(92,61,158,0.18)" rx="1"/>
+      <line x1="8" y1="70" x2="44" y2="70" stroke="#d4c9e8" stroke-width="0.9"/>
+      <!-- bracket annotation -->
+      <path d="M144,14 L144,68" stroke="#9b7fd4" stroke-width="1" fill="none"/>
+      <path d="M144,14 L152,14" stroke="#9b7fd4" stroke-width="1" fill="none"/>
+      <path d="M144,68 L152,68" stroke="#9b7fd4" stroke-width="1" fill="none"/>
+      <text x="146" y="46" font-size="7" fill="#9b7fd4" font-style="italic" font-family="Georgia,serif" transform="rotate(90,154,44)">argued</text>
+    </svg>
+  </div>
+
+  <p class="law-intro">
+    Essays and written work from my studies in <span class="highlight">law and justice</span> — exploring questions of equity, precedent, and institutional design. Each piece is an argument I believed in enough to commit to paper.
+  </p>
+
+  <!-- Essay cards — add/edit as needed, link href to your actual essay URLs or PDF files -->
+  <div class="essay-card">
+    <span class="essay-num">01</span>
+    <div class="essay-meta-line"><span>Law &amp; Justice</span> · Spring 2025</div>
+    <h3>On the morality of jury nullification</h3>
+    <p>An argument that nullification is not a bug of the jury system but a feature — a final, human check on the law.</p>
+    <!-- Replace # with a link to your essay (Google Doc, PDF, etc.) -->
+    <a href="#" class="read-link" target="_blank" rel="noopener">read the essay →</a>
+  </div>
+
+  <div class="essay-card">
+    <span class="essay-num">02</span>
+    <div class="essay-meta-line"><span>Law &amp; Justice</span> · Fall 2024</div>
+    <h3>Essay Title: On [Legal Concept] and Its Limits</h3>
+    <p>A one or two sentence abstract. What is the central argument? What do you conclude?</p>
+    <a href="#" class="read-link" target="_blank" rel="noopener">read the essay →</a>
+  </div>
+
+  <div class="essay-card">
+    <span class="essay-num">03</span>
+    <div class="essay-meta-line"><span>Law &amp; Justice</span> · Spring 2024</div>
+    <h3>Essay Title: Examining [Case or Policy]</h3>
+    <p>A brief abstract. What is the central tension?</p>
+    <a href="#" class="read-link" target="_blank" rel="noopener">read the essay →</a>
+  </div>
+
+  <div class="essay-card">
+    <span class="essay-num">04</span>
+    <div class="essay-meta-line"><span>Law &amp; Justice</span> · Fall 2023</div>
+    <h3>Essay Title: [Another Topic]</h3>
+    <p>A brief abstract for your fourth essay.</p>
+    <a href="#" class="read-link" target="_blank" rel="noopener">read the essay →</a>
+  </div>
+
+  <!-- Optional personal reflection block -->
+  <div style="margin:2.5rem 0 1rem;padding:1.2rem 1.5rem;border-left:3px solid rgba(92,61,158,0.32);background:rgba(92,61,158,0.04)">
+    <p style="font-size:0.88rem;color:var(--ink-faded);font-style:italic;line-height:1.85">"Add a note about your interest in law — the questions that animate this work, the class that changed how you think, or where you hope this path leads."</p>
+    <p style="font-size:0.72rem;color:var(--purple);margin-top:0.5rem;letter-spacing:0.06em">— your reflection</p>
+  </div>
+
+  <div class="page-footer"><span class="page-num">— iv —</span></div>
+</div>
+</div>
+
+<script>
+// ── Research node data — edit title, date, and desc for each project ──
+const nodes = [
+  {
+    title: "First Project Title",
+    date: "Year",
+    desc: "Describe your first research project — the question you were investigating, your approach, and what you found or learned. What drew you to this topic?"
+  },
+  {
+    title: "Second Project Title",
+    date: "Year",
+    desc: "Describe your second research project. What skills did you develop here? How did this build on your earlier work?"
+  },
+  {
+    title: "Third Project Title",
+    date: "Year",
+    desc: "Describe your third research project. What was the context — a class, lab, or independent inquiry? Who did you work with?"
+  },
+  {
+    title: "Fourth Project Title",
+    date: "Year",
+    desc: "Describe your fourth project. What were the key findings or outcomes? Did you present or publish this work?"
+  },
+  {
+    title: "Current Work",
+    date: "Ongoing",
+    desc: "Describe what you're working on right now. What questions are you chasing? Where do you hope this leads?"
+  }
+];
+
+function goTo(page, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-links button').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo(0, 0);
+  document.getElementById('node-detail').style.display = 'none';
+  if (page === 'research') resizeSpine();
+}
+
+function resizeSpine() {
+  const wrap = document.querySelector('#page-research .padding-left\\:62px, #page-research [style*="padding-left:62px"]');
+  const spine = document.getElementById('timeline-spine');
+  if (!spine) return;
+  const container = spine.parentElement;
+  const h = container.offsetHeight || 560;
+  spine.setAttribute('height', h);
+  spine.setAttribute('viewBox', `0 0 60 ${h}`);
+  const path = document.getElementById('spine-path');
+  if (path) {
+    const s = h;
+    path.setAttribute('d', `M30,0 C45,${s*0.07} 15,${s*0.14} 30,${s*0.2} C45,${s*0.26} 15,${s*0.34} 30,${s*0.4} C45,${s*0.46} 15,${s*0.55} 30,${s*0.6} C45,${s*0.65} 15,${s*0.75} 30,${s*0.8} C45,${s*0.85} 30,${s*0.93} 30,${s}`);
+  }
+}
+
+function switchTab(btn, tab) {
+  document.querySelectorAll('.gallery-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  ['photos', 'art', 'scrapbook'].forEach(t => {
+    document.getElementById('tab-' + t).style.display = 'none';
+  });
+  document.getElementById('tab-' + tab).style.display = 'grid';
+}
+
+function showNode(i) {
+  const n = nodes[i];
+  const d = document.getElementById('node-detail');
+  document.getElementById('node-title').textContent = n.title;
+  document.getElementById('node-date').textContent = n.date;
+  document.getElementById('node-desc').textContent = n.desc;
+  // insert detail panel after the clicked node
+  const allNodes = document.querySelectorAll('.v-node');
+  const clickedNode = allNodes[i];
+  clickedNode.parentNode.insertBefore(d, clickedNode.nextSibling);
+  d.style.display = 'block';
+  d.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+</script>
+</body>
+</html>
